@@ -1,0 +1,50 @@
+
+  /$$$$$$              /$$                        
+ /$$__  $$            | $$                        
+| $$  \__/  /$$$$$$  /$$$$$$   /$$   /$$  /$$$$$$ 
+|  $$$$$$  /$$__  $$|_  $$_/  | $$  | $$ /$$__  $$
+ \____  $$| $$$$$$$$  | $$    | $$  | $$| $$  \ $$
+ /$$  \ $$| $$_____/  | $$ /$$| $$  | $$| $$  | $$
+|  $$$$$$/|  $$$$$$$  |  $$$$/|  $$$$$$/| $$$$$$$/
+ \______/  \_______/   \___/   \______/ | $$____/ 
+                                        | $$      
+                                        | $$      
+                                        |__/      
+
+1. MOVE PROJECT FOLDER
+
+* Extract the downloaded .zip file.
+* Copy the extracted folder.
+* Paste it into the htdocs directory inside your XAMPP installation:
+  C:\xampp\htdocs\
+
+2. OPEN PROJECT IN CODE EDITOR
+
+* Open VS Code (or any code editor).
+* Open the project folder from the htdocs directory.
+
+3. SETUP DATABASE
+
+* Inside the project folder, go to the "db" folder.
+* Open the file named "database.sql".
+* Copy all the contents of this file.
+
+IMPORT INTO PHPMYADMIN:
+
+* Start Apache and MySQL from the XAMPP Control Panel.
+* Open your browser and go to:
+  http://localhost/phpmyadmin
+* Click on the "Import" tab.
+* Paste or upload the database.sql file.
+* Run the import.
+
+This will automatically create the required database and tables.
+
+4. RUN THE PROJECT
+
+* Open your browser.
+* Go to:
+  http://localhost/Asteroids/
+
+DONE
+The game should now run in your browser.

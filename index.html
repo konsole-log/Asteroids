@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asteroids</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="Spaceship.png" type="image/png">
+
+    <!--
+    Script load order matters — each file depends on symbols defined before it:
+      constants.js  → game-wide constants (FPS, SHIP_SIZE, …)
+      utils.js      → shared helpers (distBetweenPoints, handleEdge)
+      asteroids.js  → asteroid logic (depends on constants + utils)
+      ship.js       → ship + laser logic (depends on constants + utils)
+      game.js       → game loop + DOM refs (depends on all of the above)
+      auth.js       → login / leaderboard (depends on game.js for setGameHighScore)
+    All scripts are deferred so they run after the DOM is parsed.
+  -->
+    <script src="js/constants.js" defer></script>
+    <script src="js/utils.js" defer></script>
+    <script src="js/asteroids.js" defer></script>
+    <script src="js/ship.js" defer></script>
+    <script src="js/game.js" defer></script>
+    <script src="js/auth.js" defer></script>
+</head>
+
+<body>
+    <div id="page">
+
+        <!--
+      #game-row: horizontal flex container.
+      Left column (#canvas-col) holds the heading + canvas.
+      Right column (#leaderboard-sidebar) holds the leaderboard table.
+      Stacks vertically on narrow viewports via CSS media queries.
+    -->
+        <div id="game-row">
+
+            <!-- Left column: heading, score bar, canvas, optional level label -->
+            <div id="canvas-col">
+                <h1 id="heading">ASTEROIDS</h1>
+
+                <!--
+          #game-scale-wrapper contains the score bar and canvas as a unit.
+          CSS zoom on this element scales both together uniformly so the
+          game layout stays proportional at every viewport width.
+        -->
+                <div id="game-scale-wrapper">
+
+                    <!--
+            Score bar sits above the canvas but inside the scale wrapper
+            so it zooms in sync with the canvas.
+          -->
+                    <div id="container-text">
+                        <h2 id="score">Score: 000</h2>
+
+                        <!-- Centre: logged-in player name + logout button (hidden until authenticated) -->
+                        <h2 id="usrname">
+                            <span id="player-status" style="display:none;">
+                                <span id="player-name"></span>
+                                <button id="logout-btn" class="text-btn">[LOGOUT]</button>
+                            </span>
+                        </h2>
+
+                        <h2 id="highscore">Best: 000</h2>
+                    </div>
+
+                    <!--
+            #canvas-wrapper wraps the canvas + start-screen overlay.
+            The start screen is absolutely positioned to cover the canvas exactly.
+          -->
+                    <div id="canvas-wrapper">
+                        <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+                        <!--
+              #start-screen: full-canvas overlay shown before the game begins.
+              auth.js toggles its display and cycles through the three steps below.
+            -->
+                        <div id="start-screen">
+
+                            <!-- Step 1: player selects Login, Register, or Guest -->
+                            <div id="choice-step">
+                                <p id="choice-title">[ SELECT MODE ]</p>
+                                <div id="choice-buttons">
+                                    <button id="go-login-btn" class="retro-btn">LOGIN</button>
+                                    <button id="go-register-btn" class="retro-btn">REGISTER</button>
+                                    <button id="guest-btn" class="retro-btn guest-btn">PLAY AS GUEST</button>
+                                </div>
+                                <p id="guest-note">Guests can play but scores won't appear on the leaderboard.</p>
+                                <p id="highscore-label-choice">HI-SCORE: <span id="start-highscore">000</span></p>
+                            </div>
+
+                            <!-- Step 2: login or register form (shared, toggled by auth.js) -->
+                            <div id="auth-step" style="display:none;">
+                                <h2 id="auth-title">[ LOGIN ]</h2>
+                                <form id="auth-form" novalidate>
+                                    <label for="auth-username">USERNAME</label>
+                                    <input type="text" id="auth-username" placeholder="your_name"
+                                        autocomplete="username" maxlength="20" />
+                                    <label for="auth-password">PASSWORD</label>
+                                    <input type="password" id="auth-password" placeholder="••••••"
+                                        autocomplete="current-password" maxlength="72" />
+                                    <p id="auth-message" class="auth-msg"></p>
+                                    <button type="submit" id="auth-submit">LOGIN</button>
+                                </form>
+                                <button id="back-btn" class="text-btn">← BACK</button>
+                            </div>
+
+                            <!-- Step 3: welcome message, control reference, and PRESS ENTER prompt -->
+                            <div id="info-step" style="display:none;">
+                                <p id="welcome-msg" class="welcome"></p>
+
+                                <!-- Two-column reference card: controls on the left, scoring on the right -->
+                                <div id="start-columns">
+                                    <div class="start-col">
+                                        <p class="col-header">[ CONTROLS ]</p>
+                                        <p>W / ↑ &nbsp;&nbsp;&nbsp; THRUST</p>
+                                        <p>A / ← &nbsp;&nbsp;&nbsp; LEFT</p>
+                                        <p>D / → &nbsp;&nbsp;&nbsp; RIGHT</p>
+                                        <p>SPACE &nbsp;&nbsp; FIRE</p>
+                                    </div>
+                                    <div class="start-divider">|</div>
+                                    <div class="start-col">
+                                        <p class="col-header">[ SCORING ]</p>
+                                        <p>BIG ROCK &nbsp;&nbsp;&nbsp;&nbsp; 20</p>
+                                        <p>MED ROCK &nbsp;&nbsp;&nbsp;&nbsp; 50</p>
+                                        <p>SML ROCK &nbsp;&nbsp;&nbsp; 100</p>
+                                    </div>
+                                </div>
+
+                                <p id="highscore-label">HI-SCORE: <span id="start-highscore-info">000</span></p>
+                                <p id="press-enter" class="blink">— PRESS ENTER TO START —</p>
+                            </div>
+
+                        </div><!-- /#start-screen -->
+                    </div><!-- /#canvas-wrapper -->
+
+                </div><!-- /#game-scale-wrapper -->
+
+            </div><!-- /#canvas-col -->
+
+            <!-- Right column: sound toggles + live leaderboard table -->
+            <div id="leaderboard-sidebar">
+
+                <!-- SFX and Music toggle buttons; onclick handlers defined in game.js -->
+                <div id="sound-controls">
+                    <button id="sfx-btn" class="toggle-btn" onclick="toggleSound()">SFX: ON</button>
+                    <button id="music-btn" class="toggle-btn" onclick="toggleMusic()">MUS: ON</button>
+                </div>
+
+                <h2 id="lb-title">[ LEADERBOARD ]</h2>
+
+                <!-- Populated dynamically by renderLeaderboard() in auth.js -->
+                <table id="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>PLAYER</th>
+                            <th>SCORE</th>
+                            <th>BEST PHASE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <tr>
+                            <td colspan="4" class="lb-empty">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div><!-- /#leaderboard-sidebar -->
+
+        </div><!-- /#game-row -->
+
+    </div><!-- /#page -->
+</body>
+
+</html>
