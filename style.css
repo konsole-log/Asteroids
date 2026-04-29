@@ -458,7 +458,7 @@ body::after {
 /* Fixed-width scrollable panel next to the game canvas */
 #leaderboard-sidebar {
   width: 350px;
-  height: 700px;
+  height:750px;
   overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.216);
   padding: 12px 16px;
@@ -667,4 +667,115 @@ body::after {
     width: calc(800px * 0.5);
     max-height: 200px;
   }
+}
+/* ─── DELETE BUTTON ──────────────────────────────────────────────────────────── */
+
+.danger-btn {
+  color: tomato !important;
+  margin-left: 6px;
+  transition: color 0.15s, text-shadow 0.15s;
+}
+.danger-btn:hover {
+  color: rgb(255, 80, 80) !important;
+  text-shadow: 0 0 8px tomato;
+}
+
+/* ─── DELETE CONFIRMATION MODAL ──────────────────────────────────────────────── */
+
+#delete-confirm-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;             /* above everything including start screen */
+}
+
+#delete-confirm-box {
+  background: #000;
+  border: 1px solid tomato;
+  outline: 1px dashed rgba(255, 80, 80, 0.25);
+  outline-offset: -8px;
+  padding: 36px 40px 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 0 30px rgba(255, 80, 80, 0.2);
+}
+
+#delete-confirm-title {
+  font-size: 28px;
+  color: tomato;
+  text-shadow: 0 0 10px tomato;
+  letter-spacing: 3px;
+  margin: 0;
+}
+
+#delete-confirm-msg {
+  font-size: 19px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.6;
+  margin: 0;
+}
+
+#delete-confirm-username {
+  color: cornsilk;
+  text-shadow: 0 0 6px cornsilk;
+  font-size: 22px;
+}
+
+#delete-confirm-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 220px;
+}
+
+#delete-confirm-buttons .retro-btn {
+  width: 100%;
+  font-size: 20px;
+  padding: 8px 0;
+  letter-spacing: 2px;
+}
+
+.delete-yes {
+  color: tomato !important;
+  border-color: tomato !important;
+  text-shadow: 0 0 8px tomato !important;
+}
+.delete-yes:hover {
+  background: rgba(255, 80, 80, 0.12) !important;
+  box-shadow: 0 0 12px rgba(255, 80, 80, 0.35) !important;
+}
+
+#delete-confirm-error {
+  min-height: 18px;
+  margin: 0;
+  font-size: 16px;
+}
+
+/* ─── PAUSE SCREEN ───────────────────────────────────────────────────────────── */
+/* Pause is drawn directly onto the canvas in game.js — no HTML element needed.  */
+/* This rule styles the P-key hint shown in the controls column on the start screen */
+/* (already handled by existing .start-col p rules — nothing extra needed here).  */
+
+/* ─── LOGOUT WARNING FLASH ───────────────────────────────────────────────────── */
+
+.logout-warning {
+  color: tomato !important;
+  border-color: tomato !important;
+  font-size: 12px !important;
+  letter-spacing: 0 !important;
+  animation: blink 0.4s step-end infinite;
+}
+#pause-bar {
+  display: flex;
+  justify-content: flex-end;
+  width: 800px;
+  margin-bottom: 2px;
 }
